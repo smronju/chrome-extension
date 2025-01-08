@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Marketplace AutoUploader",
+  "author": {
+    "email": "smronju@gmail.com"
+  },
+  "version": "1.0",
+  "description": "Fetch product details and upload to Facebook Marketplace.",
+  "permissions": ["scripting", "activeTab", "storage"],
+  "host_permissions": ["https://dummyjson.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Marketplace AutoUploader",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/marketplace/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
