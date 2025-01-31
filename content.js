@@ -19,6 +19,58 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 }
             };
 
+            const selectCategory = (categoryName, defaultCategory = 'Tools') => {
+                // Step 1: Find and click the category dropdown button
+                const categoryButton = document.querySelector('[aria-label="Category"]');
+
+                if (!categoryButton) {
+                    console.error("Category button not found.");
+                    return;
+                }
+
+                categoryButton.click(); // Open the dropdown
+
+                // Wait for dropdown options to load
+                setTimeout(() => {
+                    // Step 2: Find the category list
+                    const categoryList = document.querySelector('[aria-label="Dropdown menu"]');
+
+                    if (!categoryList) {
+                        console.error("Category list not found.");
+                        return;
+                    }
+
+                    // Step 3: Loop through category items and select the right one
+                    const categoryItems = categoryList.querySelectorAll('[role="button"]');
+                    let matchedCategory = null;
+                    let defaultCategoryItem = null;
+
+                    for (let item of categoryItems) {
+                        let categoryText = item.innerText.trim().toLowerCase();
+
+                        if (categoryText === categoryName.toLowerCase()) {
+                            matchedCategory = item;
+                        }
+
+                        // Fallback to default category.
+                        if (categoryText === defaultCategory.toLowerCase()) {
+                            defaultCategoryItem = item;
+                        }
+                    }
+
+                    // Step 4: Click the matched category or fallback to default
+                    if (matchedCategory) {
+                        matchedCategory.click();
+                        console.log(`Category "${categoryName}" selected.`);
+                    } else if (defaultCategoryItem) {
+                        defaultCategoryItem.click();
+                        console.warn(`Category "${categoryName}" not found. Defaulting to "${defaultCategory}".`);
+                    } else {
+                        console.error(`Neither category "${categoryName}" nor default "${defaultCategory}" found.`);
+                    }
+                }, 1000);
+            };
+
             // Fill the title
             const productTitle = document.querySelector('label[aria-label="Title"] input');
             setValue(productTitle, product.title);
@@ -26,6 +78,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // Fill the price
             const productPrice = document.querySelector('label[aria-label="Price"] input');
             setValue(productPrice, product.price);
+
+            // Set Category (Dropdown)
+            selectCategory(product.category);
+
 
             // Fill the description
             const productDescription = document.querySelector('label[aria-label="Description"] textarea');
